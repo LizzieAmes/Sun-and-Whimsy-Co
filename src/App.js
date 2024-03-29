@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ProductListPage from './pages/ProductListPage';
-import Login from './pages/Login'; // This should point to the correct file
+import Login from './pages/Log'; // This should point to the correct file
 
 function App() {
   return (
