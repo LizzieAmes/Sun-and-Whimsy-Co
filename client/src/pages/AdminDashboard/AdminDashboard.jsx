@@ -6,7 +6,7 @@ function AdminDashboard() {
     <div>
       <h1>Admin Dashboard</h1>
       <p>Welcome to your dashboard. Here you can manage products.</p>
-      // Additional UI elements will go here
+      {/* // Additional UI elements will go here */}
     </div>
   );
 }
