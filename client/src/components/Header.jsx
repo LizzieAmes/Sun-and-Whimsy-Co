@@ -8,11 +8,11 @@ import './Header.css';
 const Header = () => (
   <header className="header">
     <div className="brand-name">
-      <img
+      {/* <img
         src={brandLogo}
         alt="Sun & Whimsy Co Logo"
         className="brand-logo"
-      />
+      /> */}
     </div>
 
     {/* // update if full site is used */}
