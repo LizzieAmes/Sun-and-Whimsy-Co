@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './AdminDashboard.css';
+import AddProductForm from '../../components/AddProductForm';
+import ProductButton from '../../components/Button';
 
 function AdminDashboard() {
+  const [showForm, setShowForm] = useState(false);
   return (
     <div>
       <h1>Admin Dashboard</h1>
-      <p>Welcome to your dashboard. Here you can manage products.</p>
-      {/* // Additional UI elements will go here */}
+      <ProductButton onClick={() => setShowForm(!showForm)}>
+        Add New Product
+      </ProductButton>
+      {showForm && <AddProductForm />}
     </div>
   );
 }
