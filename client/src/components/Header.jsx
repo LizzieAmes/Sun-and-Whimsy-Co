@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Header.css';
+import logo from '../assets/images/logo.png';
 import {
   Box,
   Flex,
@@ -12,6 +13,7 @@ import {
 
 const Header = () => {
   const bgColor = useColorModeValue('pink.100', 'pink.700'); // Light mode pink, dark mode deeper pink
+  // const isLogginIn = true;
 
   return (
     <Flex
@@ -25,24 +27,28 @@ const Header = () => {
     >
       <Flex align="center" mr={5}>
         <Image
-          src="/path-to-your-logo.svg" // Your logo
+          src={logo}
           alt="Sun & Whimsy Co"
-          style={{ width: '2rem', height: 'auto' }}
+          boxSize="100px" // Set a fixed size the logo
         />
-        <Text fontSize="lg" fontWeight="bold" marginLeft="1rem">
+        <Text fontSize="5xl" fontWeight="bold" marginLeft="1rem">
           Sun & Whimsy Co
         </Text>
       </Flex>
 
-      <Box display={{ base: 'none', md: 'flex' }} mt={{ base: 4, md: 0 }}>
-        {/* Navigation Items */}
-        <Button variant="ghost">Products</Button>
-        <Button variant="ghost">Orders</Button>
-        {/* More nav items */}
-      </Box>
-
-      {/* Profile Icon/Button - Placeholder for actual functionality */}
-      <Button colorScheme="pink">Logout</Button>
+      <Flex align="center" mt={{ base: 4, md: 0 }}>
+        <Button as={Link} to="/admin" variant="ghost" mr={4}>
+          Dashboard
+        </Button>
+        <Button as={Link} to="/inventory" variant="ghost" mr={4}>
+          Inventory
+        </Button>
+        <Button as={Link} to="/orders" variant="ghost" mr={4}>
+          Orders
+        </Button>
+        <Button colorScheme="pink">Logout</Button>
+        {/* {isLoggedIn && <Button colorScheme="pink">Logout</Button>} */}
+      </Flex>
     </Flex>
   );
 };

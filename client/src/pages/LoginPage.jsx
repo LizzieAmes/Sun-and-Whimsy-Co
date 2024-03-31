@@ -22,20 +22,19 @@ function LoginPage() {
     setCredentials({ ...credentials, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    //authenticate against backend
-    // This is a placeholder for actual authentication logic
-    if (
-      credentials.username === 'admin' &&
-      credentials.password === 'password'
-    ) {
-      toast({ title: 'Login successful', status: 'success' });
-      navigate('/admin'); // Navigate to the AdminDashboard upon successful login
-    } else {
-      toast({ title: 'Invalid credentials', status: 'error' });
-    }
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  // This is a placeholder for actual authentication logic
+  if (credentials.username === 'admin' && credentials.password === 'password') {
+    // Simulate setting an authentication token upon successful login
+    localStorage.setItem('authToken', 'simulatedAuthToken');
+
+    toast({ title: 'Login successful', status: 'success' });
+    navigate('/admin'); // Navigate to the AdminDashboard upon successful login
+  } else {
+    toast({ title: 'Invalid credentials', status: 'error' });
+  }
+};
 
   return (
     <Box

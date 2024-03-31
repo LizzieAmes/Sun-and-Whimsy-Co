@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, Flex, Box } from '@chakra-ui/react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import Header from './components/Header';
@@ -9,29 +9,33 @@ import LoginPage from './pages/LoginPage';
 // import Login from './pages/Log'; 
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
+import InventoryPage from './pages/InventoryPage';
 
 function App() {
   return (
     <ChakraProvider>
       <Router>
-        <Header />
-        <Routes>
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
+        <Flex flexDirection="column" minHeight="100vh">
+          <Header />
+          <Box as="main" flex="1">
+            <Routes>
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/" element={<LoginPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/inventory" element={<InventoryPage />} />
 
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          {/* Uncomment and correct the paths and component references as needed */}
-          {/* <Route path="/products" element={<ProductListPage />} /> */}
-          {/* <Route path="/login" element={<Login />} /> */}
-        </Routes>
-        <Footer />
+              {/* More routes */}
+            </Routes>
+          </Box>
+          <Footer />
+        </Flex>
       </Router>
     </ChakraProvider>
   );
