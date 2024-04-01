@@ -6,8 +6,8 @@ const productSchema = new mongoose.Schema({
   price: { type: Number, required: true },
   categories: [String],
   stock: { type: Number, required: true },
-  imageUrl: String
-  // Add other fields like sizes, colors, etc.
+  imageUrl: String,
+ 
 });
 
 module.exports = mongoose.model('Product', productSchema);

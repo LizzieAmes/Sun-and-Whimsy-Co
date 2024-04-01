@@ -1,12 +1,12 @@
 // Import models
-const User = require('./Admin');
+const Admin = require('./Admin');
 const Product = require('./Product');
 const Order = require('./Order');
 
 // Export models
 module.exports = {
-  User,
+  Admin,
   Product,
   Order
 };
-const { User, Product, Order } = require('../models'); // Adjust the path as necessary
+

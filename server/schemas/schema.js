@@ -1,12 +1,14 @@
-// server/schemas/schema.js
-
 const { gql } = require('apollo-server-express');
+const { DateTime } = require('graphql-scalars');
 
 // GraphQL schema definitions
 const typeDefs = gql`
+  scalar DateTime
+  scalar PositiveInt
+
   type Query {
-    users: [User]
-    user(id: ID!): User
+    admins: [Admin]
+    admin(id: ID!): Admin
     products: [Product]
     product(id: ID!): Product
     orders: [Order]
@@ -21,7 +23,7 @@ const typeDefs = gql`
       description: String!
       price: Float!
       categories: [String]
-      stock: Int
+      stock: PositiveInt
       imageUrl: String
     ): Product
     updateProduct(
@@ -30,14 +32,14 @@ const typeDefs = gql`
       description: String
       price: Float
       categories: [String]
-      stock: Int
+      stock: PositiveInt
       imageUrl: String
     ): Product
     deleteProduct(id: ID!): Product
     createOrder(products: [ProductOrderInput]!): Order
   }
 
-  type User {
+  type Admin {
     id: ID!
     name: String!
     email: String!
@@ -48,13 +50,13 @@ const typeDefs = gql`
 
   type PaymentDetails {
     cardNumber: String
-    expiryDate: Date
-    CVV: Number
+    expiryDate: DateTime
+    CVV: PositiveInt
   }
 
   type AuthPayload {
     token: String!
-    user: User!
+    admin: Admin!
   }
 
   type Product {
@@ -63,34 +65,27 @@ const typeDefs = gql`
     description: String!
     price: Float!
     categories: [String]
-    stock: Int
+    stock: PositiveInt
     imageUrl: String
   }
 
   type Order {
     id: ID!
-    user: User!
+    admin: Admin!
     products: [ProductOrder]
-    orderDate: Date!
+    orderDate: DateTime!
     status: String!
   }
 
   type ProductOrder {
     product: Product!
-    quantity: Int!
+    quantity: PositiveInt!
   }
 
   input ProductOrderInput {
     productId: ID!
-    quantity: Int!
+    quantity: PositiveInt!
   }
 `;
 
-// Resolvers define the technique for fetching the types in the schema.
-const resolvers = {
-  Query: {
-    hello: () => 'Hello world!',
-  },
-};
-
-module.exports = { typeDefs, resolvers };
+module.exports = { typeDefs };

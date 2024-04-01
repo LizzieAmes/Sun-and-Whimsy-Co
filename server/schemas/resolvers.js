@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { User, Product, Order } = require('../models');
+const { Admin, Product, Order } = require('../models');
 
 const resolvers = {
   Query: {
@@ -9,31 +9,31 @@ const resolvers = {
     // Add more queries as needed
   },
   Mutation: {
-    // User signup
+    // Admin signup
     signup: async (_, { name, email, password }) => {
       const hashedPassword = await bcrypt.hash(password, 10);
-      const user = new User({ name, email, password: hashedPassword });
-      await user.save();
+      const admin = new Admin({ name, email, password: hashedPassword });
+      await admin.save();
 
-      const token = jwt.sign({ userId: user.id }, 'YOUR_SECRET_KEY'); // Use an environment variable for the secret key
+      const token = jwt.sign({ adminId: admin.id }, process.env.JWT_SECRET); // Use an environment variable for the secret key
 
-      return { token, user };
+      return { token, admin };
     },
-    // User login
+    // Admin login
     login: async (_, { email, password }) => {
-      const user = await User.findOne({ email });
-      if (!user) {
-        throw new Error('No such user found');
+      const admin = await Admin.findOne({ email });
+      if (!admin) {
+        throw new Error('No such admin found');
       }
 
-      const valid = await bcrypt.compare(password, user.password);
+      const valid = await bcrypt.compare(password, admin.password);
       if (!valid) {
         throw new Error('Invalid password');
       }
 
-      const token = jwt.sign({ userId: user.id }, 'YOUR_SECRET_KEY');
+      const token = jwt.sign({ adminId: admin.id }, process.env.JWT_SECRET);
 
-      return { token, user };
+      return { token, admin };
     },
     // Add product
     addProduct: async (

@@ -1,6 +1,6 @@
 // server/index.js
 
-require('dotenv').config(); // If you're using dotenv to manage environment variables
+require('dotenv').config({ path: './.env' }); 
 const startServer = require('./server');
 
 startServer();
