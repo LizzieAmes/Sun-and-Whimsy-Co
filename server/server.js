@@ -1,8 +1,7 @@
-// server/server.js
-
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const { typeDefs, resolvers } = require('./schemas/schema');
+const { resolvers } = require('./schemas/resolvers');
 const connectDatabase = require('./database');
 const { port } = require('./config/config');
 
