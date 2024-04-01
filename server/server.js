@@ -1,10 +1,12 @@
-// server/server.js
-
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
-const { typeDefs, resolvers } = require('./schemas/schema');
+const { typeDefs } = require('./schemas/schema');
+const { resolvers } = require('./schemas/resolvers');
 const connectDatabase = require('./database');
-const { port } = require('./config/config');
+// require('dotenv').config({ path: '../.env' });
+// const { port } = require('./config/config');
+
+require('dotenv').config();
 
 async function startServer() {
   const app = express();
@@ -21,8 +23,10 @@ async function startServer() {
   apolloServer.applyMiddleware({ app, path: '/graphql' });
 
   // Start the server
-  app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}${apolloServer.graphqlPath}`);
+  app.listen(process.env.PORT, () => {
+    console.log(
+      `Server running at http://localhost:${process.env.PORT}${apolloServer.graphqlPath}`
+    );
   });
 }
 
