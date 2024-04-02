@@ -10,10 +10,11 @@ const orderSchema = new mongoose.Schema({
   status: { type: String, default: 'pending' },
   // Include payment confirmation, shipping details, etc.
 
-paymentConfirmation: 'Payment recceived. Transaction ID: 34565174',
-shippingDetails: {
-  address: '752 Main St',
-  city: 'Salt Lake City',
+paymentConfirmation: { type: String }, //'Payment details
+shippingDetails: { //object details
+  address: { type: String, required: true },
+  city: { type: String, required: true }, // add state, postal etc.
+  
   //add more details?
 }
 
