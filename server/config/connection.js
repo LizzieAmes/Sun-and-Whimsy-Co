@@ -1,7 +1,7 @@
-// server/config/config.js
+const mongoose = require('mongoose');
 
-module.exports = {
-    mongoURI: process.env.MONGO_URI || 'your_mongodb_uri',
-    port: process.env.PORT || 4000,
-  };
-  
+mongoose.connect(
+  process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/sunAndWhimsyDb'
+);
+
+module.exports = mongoose.connection;
