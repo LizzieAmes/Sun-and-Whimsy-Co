@@ -11,7 +11,7 @@ import {
   Image,
 } from '@chakra-ui/react';
 
-const Header = () => {
+const Header = ({ isLoggedIn}) => {
   const bgColor = useColorModeValue('pink.100', 'pink.700'); // Light mode pink, dark mode deeper pink
   // const isLogginIn = true;
 
@@ -37,6 +37,8 @@ const Header = () => {
       </Flex>
 
       <Flex align="center" mt={{ base: 4, md: 0 }}>
+      
+    
         <Button as={Link} to="/admin" variant="ghost" mr={4}>
           Dashboard
         </Button>
@@ -45,9 +47,13 @@ const Header = () => {
         </Button>
         <Button as={Link} to="/orders" variant="ghost" mr={4}>
           Orders
-        </Button>
+        </Button> 
+      
+      {isLoggedIn ? (
         <Button colorScheme="pink">Logout</Button>
+      ) : null}
         {/* {isLoggedIn && <Button colorScheme="pink">Logout</Button>} */}
+      
       </Flex>
     </Flex>
   );
