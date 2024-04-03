@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useQuery } from '@apollo/client';
+import { GET_PRODUCTS } from '../utils/queries';
 import {
   Box,
   Image,
@@ -12,46 +14,45 @@ import {
   ModalCloseButton,
   ModalBody,
 } from '@chakra-ui/react';
-import AddProductForm from '../components/AddProductForm'; // 
+import AddProductForm from '../components/AddProductForm';
 
 const InventoryPage = () => {
-  const [products, setProducts] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { loading, error, data } = useQuery(GET_PRODUCTS);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    const storedProducts = JSON.parse(localStorage.getItem('products')) || [];
-    const productsWithImageUrls = storedProducts.map((product) => {
-      if (product.image && product.image instanceof File) {
-        const imageUrl = URL.createObjectURL(product.image);
-        return { ...product, imageUrl };
-      }
-      return product;
-    });
+    if (data) {
+      setProducts(data.products);
+    }
+  }, [data]);
 
-    setProducts(productsWithImageUrls);
-
-    return () => {
-      productsWithImageUrls.forEach((product) => {
-        if (product.imageUrl) {
-          URL.revokeObjectURL(product.imageUrl);
-        }
-      });
-    };
-  }, []);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error loading products!</p>;
 
   return (
     <Box>
-      <Button onClick={onOpen} colorScheme="teal" mb="4" mt="6" ml="4">
+      <Button onClick={onOpen} colorScheme="teal" mb="4">
         Add New Product
       </Button>
 
       {products.map((product, index) => (
         <Box key={index} p={5} shadow="md" borderWidth="1px" my={2}>
-          <Text fontSize="xl">{product.name}</Text>
+          <Text fontSize="xl" fontWeight="bold">
+            {product.name}
+          </Text>
+          <Text>Description: {product.description}</Text>
+          <Text>Price: ${product.price.toFixed(2)}</Text>
+          <Text>Categories: {product.categories.join(', ')}</Text>{' '}
+          <Text>Stock: {product.stock}</Text>
           {product.imageUrl && (
-            <Image src={product.imageUrl} alt={product.name} boxSize="100px" />
+            <Image
+              src={product.imageUrl}
+              alt={product.name}
+              boxSize="100px"
+              objectFit="cover"
+            />
           )}
-          
         </Box>
       ))}
 
