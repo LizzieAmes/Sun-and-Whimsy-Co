@@ -1,37 +1,3 @@
-// const express = require('express');
-// const { ApolloServer } = require('apollo-server-express');
-// const { typeDefs } = require('./schemas/schema');
-// const { resolvers } = require('./schemas/resolvers');
-// const connectDatabase = require('./database');
-// // require('dotenv').config({ path: '../.env' });
-// // const { port } = require('./config/config');
-
-// require('dotenv').config();
-
-// async function startServer() {
-//   const app = express();
-
-//   // Connect to the database
-//   connectDatabase();
-
-//   // Create Apollo Server
-//   const apolloServer = new ApolloServer({ typeDefs, resolvers });
-
-//   await apolloServer.start();
-
-//   // Apply Apollo GraphQL middleware and set the path to /graphql
-//   apolloServer.applyMiddleware({ app, path: '/graphql' });
-
-//   // Start the server
-//   app.listen(process.env.PORT, () => {
-//     console.log(
-//       `Server running at http://localhost:${process.env.PORT}${apolloServer.graphqlPath}`
-//     );
-//   });
-// }
-
-// startServer();
-
 const express = require('express');
 const { ApolloServer } = require('@apollo/server');
 const { expressMiddleware } = require('@apollo/server/express4');
@@ -57,10 +23,10 @@ const startApolloServer = async () => {
 
   // if we're in production, serve client/dist as static assets
   if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../client/dist')));
+    app.use(express.static(path.join(__dirname, '../client/build')));
 
     app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+      res.sendFile(path.join(__dirname, '../client/build/index.html'));
     });
   }
 

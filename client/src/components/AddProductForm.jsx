@@ -34,11 +34,11 @@ const AddProductForm = () => {
     setProduct({ ...product, [name]: value });
   };
 
-const handleImageChange = (e) => {
-  if (e.target.files[0]) {
-    setProduct({ ...product, image: e.target.files[0] });
-  }
-};
+  const handleImageChange = (e) => {
+    if (e.target.files[0]) {
+      setProduct({ ...product, image: e.target.files[0] });
+    }
+  };
 
   const handleSizeChange = (size, valueString) => {
     const newSizeArray = product.sizes.map((s) =>
@@ -81,7 +81,6 @@ const handleImageChange = (e) => {
     }
   }, [product.sizes, selectedType]);
 
-
   const resetForm = () => {
     setProduct({
       name: '',
@@ -96,49 +95,49 @@ const handleImageChange = (e) => {
     setSelectedType('');
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  const existingProducts = JSON.parse(localStorage.getItem('products')) || [];
-  const newProducts = [...existingProducts, product];
-  localStorage.setItem('products', JSON.stringify(newProducts));
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const existingProducts = JSON.parse(localStorage.getItem('products')) || [];
+    const newProducts = [...existingProducts, product];
+    localStorage.setItem('products', JSON.stringify(newProducts));
 
-toast({
-  title: 'Product added.',
-  description: 'Select an option below.',
-  status: 'success',
-  duration: 5000,
-  isClosable: true,
-  position: 'top',
-  render: ({ onClose }) => (
-    <Box color="white" p={3} bg="blue.500" borderRadius="md">
-      <p>Product added successfully.</p>
-      <Button
-        size="sm"
-        onClick={() => {
-          resetForm();
-          onClose();
-        }}
-        mt={2}
-      >
-        Add Another
-      </Button>
-      <Button
-        size="sm"
-        onClick={() => {
-          navigate('/inventory');
-          onClose();
-        }}
-        mt={2}
-        ml={2}
-      >
-        View Inventory
-      </Button>
-    </Box>
-  ),
-});
+    toast({
+      title: 'Product added.',
+      description: 'Select an option below.',
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+      position: 'top',
+      render: ({ onClose }) => (
+        <Box color="white" p={3} bg="blue.500" borderRadius="md">
+          <p>Product added successfully.</p>
+          <Button
+            size="sm"
+            onClick={() => {
+              resetForm();
+              onClose();
+            }}
+            mt={2}
+          >
+            Add Another
+          </Button>
+          <Button
+            size="sm"
+            onClick={() => {
+              navigate('/inventory');
+              onClose();
+            }}
+            mt={2}
+            ml={2}
+          >
+            View Inventory
+          </Button>
+        </Box>
+      ),
+    });
 
-  resetForm();
-};
+    resetForm();
+  };
 
   return (
     <Box
