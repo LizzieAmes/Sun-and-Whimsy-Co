@@ -41,7 +41,7 @@ const InventoryPage = () => {
 
   return (
     <Box>
-      <Button onClick={onOpen} colorScheme="teal" mb="4" mt="6">
+      <Button onClick={onOpen} colorScheme="teal" mb="4" mt="6" ml="4">
         Add New Product
       </Button>
 
