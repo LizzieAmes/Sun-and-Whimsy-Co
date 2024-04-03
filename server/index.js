@@ -1,6 +1,6 @@
-// server/index.js
+server/index.js
 
-// require('dotenv').config({ path: './.env' }); 
-// const startServer = require('./server');
+require('dotenv').config({ path: './.env' }); 
+const startServer = require('./server');
 
-// startServer();
+startServer();
