@@ -11,10 +11,10 @@ import ProtectedRoute from './components/ProtectedRoute';
 import InventoryPage from './pages/InventoryPage';
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql', 
+  uri: 'http://localhost:3001/graphql', 
   cache: new InMemoryCache(),
 });
-
+import { ChakraProvider, Flex, Box } from '@chakra-ui/react';
 function App() {
   return (
     <ApolloProvider client={client}>

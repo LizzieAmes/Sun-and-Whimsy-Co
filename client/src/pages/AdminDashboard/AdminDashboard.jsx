@@ -60,44 +60,18 @@ function AdminDashboard() {
 
   return (
     <Box p={5}>
-      <Flex justify="space-between" align="center" mb={5}>
-        <Heading as="h1" size="xl">
-          Admin Dashboard 🌟
-        </Heading>
-        <Button onClick={onOpen} colorScheme="teal">
-          Add New Admin
-        </Button>
-      </Flex>
-
-      <SimpleGrid columns={[1, null, 3]} spacing="40px" mb={5}>
-        {stats.map((stat, index) => (
-          <Stat
-            key={index}
-            p={5}
-            shadow="md"
-            borderWidth="1px"
-            borderRadius="lg"
-          >
-            <StatLabel>{stat.label}</StatLabel>
-            <StatNumber>{stat.number}</StatNumber>
-          </Stat>
-        ))}
-      </SimpleGrid>
-
-      <SalesChart data={salesData} />
-    
- 
+      {/* Rest of the JSX code for AdminDashboard */}
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Add a New Admin</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            {/* Pass formData, handleChange, and handleSubmit as props */}
             <AddAdminForm 
               formData={formData} 
               onChange={handleChange} 
               onSubmit={handleSubmit} 
+              loading={loading} // Pass loading state to disable the button when submitting
             />
           </ModalBody>
         </ModalContent>
@@ -107,47 +81,3 @@ function AdminDashboard() {
 }
 
 export default AdminDashboard;
-//   return (
-//     <Box p={5}>
-//       <Flex justify="space-between" align="center" mb={5}>
-//         <Heading as="h1" size="xl">
-//           Admin Dashboard 🌟
-//         </Heading>
-//         <Button onClick={onOpen} colorScheme="teal">
-//           Add New Product
-//         </Button>
-//       </Flex>
-
-//       <SimpleGrid columns={[1, null, 3]} spacing="40px" mb={5}>
-//         {stats.map((stat, index) => (
-//           <Stat
-//             key={index}
-//             p={5}
-//             shadow="md"
-//             borderWidth="1px"
-//             borderRadius="lg"
-//           >
-//             <StatLabel>{stat.label}</StatLabel>
-//             <StatNumber>{stat.number}</StatNumber>
-//           </Stat>
-//         ))}
-//       </SimpleGrid>
-
-//       {/* Include the SalesChart component and pass the salesData to it */}
-//       <SalesChart data={salesData} />
-
-//       <Modal isOpen={isOpen} onClose={onClose}>
-//         <ModalOverlay />
-//         <ModalContent>
-//           <ModalHeader>Add a New Product</ModalHeader>
-//           <ModalCloseButton />
-//           <ModalBody pb={6}>
-//             <AddProductForm />
-//           </ModalBody>
-//         </ModalContent>
-//       </Modal>
-//     </Box>
-//   );
-// }
-
-// export default AdminDashboard;
