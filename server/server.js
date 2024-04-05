@@ -6,7 +6,7 @@ const path = require('path');
 const { typeDefs, resolvers } = require('./schemas');
 const db = require('./config/connection');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 const app = express();
 const server = new ApolloServer({
   typeDefs,
@@ -19,23 +19,16 @@ const startApolloServer = async () => {
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
 
-  // Serve static files from the React app in production
+  app.use('/graphql', expressMiddleware(server));
+
+  // if we're in production, serve client/dist as static assets
   if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../client/dist')));
+    app.use(express.static(path.join(__dirname, '../client/build')));
 
     app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+      res.sendFile(path.join(__dirname, '../client/build/index.html'));
     });
-  } else {
-    // In development, you might not need to serve static files here,
-    // especially if you're using Create React App's development server.
-    // If you do need to serve static files in development, adjust as necessary.
-    // Example: Serving static files from a 'public' directory (adjust as needed)
-    app.use(express.static(path.join(__dirname, 'dist')));
   }
-
-  // Removed the additional app.get('*') route outside the production check
-  // to prevent it from conflicting with the above route.
 
   db.once('open', () => {
     app.listen(PORT, () => {

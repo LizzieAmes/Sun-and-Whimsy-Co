@@ -1,6 +1,7 @@
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { Admin, Product, Order } = require('../models');
+require("dotenv").config()
 
 const resolvers = {
   Query: {
@@ -11,12 +12,29 @@ const resolvers = {
   Mutation: {
     // Admin signup
     signup: async (_, { name, email, password }) => {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const admin = new Admin({ name, email, password: hashedPassword });
-      await admin.save();
+      //const hashedPassword = await bcrypt.hash(password, 10);
+      //const admin = new Admin({ name, email, password: hashedPassword });
+      //await admin.save();
+      const admin = await Admin.create({ name, email, password })
+      console.log(admin)
+      // const token = jwt.sign(
+      //   {  data:{name:admin.name, email:admin.email, admin:admin._id}},
+         
+      //     process.env.JWT_SECRET
+      // ); // Use an environment variable for the secret key
+      
+      const token = jwt.sign(
+        {
+          data: {
+            name: admin.name,
+            email: admin.email,
+            _id: admin._id
+          }        
+        },
+        process.env.JWT_SECRET
+      )
 
-      const token = jwt.sign({ adminId: admin.id }, process.env.JWT_SECRET); // Use an environment variable for the secret key
-
+      console.log(token)
       return { token, admin };
     },
     // Admin login
