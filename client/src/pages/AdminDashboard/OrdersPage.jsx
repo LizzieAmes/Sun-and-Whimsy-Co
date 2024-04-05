@@ -1,5 +1,52 @@
-const mongoose = require('mongoose');
+import React, { useState, useEffect } from 'react';
+import: { 
+    orders,
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/programming-thoughts');
 
-module.exports = mongoose.connection;
+
+
+
+}  '@chakra-ui/react'
+    import { useDisclosure } from '@chakra-ui/react';
+
+    const OrdersPage = () => {
+const [orders, setOrders] = useState([]);
+const { isOpen, onOpen, onClose } = useDisclosure();
+
+useEffect(() => {
+    const fetchOrders = JSON.parse(localStorage.getItem('orders')) || [];
+    const ordersWithImagesUrl = storedOrders.map((product) => {
+        if () {
+            const imageUrl = URL.createObjectURL(order.image);
+            return { ...product, imageUrl };
+        }
+        return product;
+    });
+
+setOrders(ordersWithImageUrls);
+
+return () => {
+    ordersWithImageUrls.forEach((order) => {
+        if (order.imageUrl) {
+          URL.revokeObjectURL(.imageUrl);
+}
+
+})}
+
+return (
+<box>
+<button>
+    order
+</button>
+</box>
+
+{orders.map}
+
+
+)
+
+
+export default OrdersPage;
+
+
+//mongodb://localhost:27017
