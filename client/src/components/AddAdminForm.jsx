@@ -3,27 +3,32 @@ import { gql, useMutation } from '@apollo/client';
 import { Button, FormControl, FormLabel, Input, useToast } from '@chakra-ui/react';
 
 // Define the GraphQL mutation
-const ADD_ADMIN = gql`
-  mutation AddAdmin($name: String!, $email: String!, $password: String!) {
-    addAdmin(name: $name, email: $email, password: $password) {
-      id
-      name
-      email
+const SIGNUP_ADMIN = gql`
+  mutation SignupAdmin($name: String!, $email: String!, $password: String!) {
+    signup(name: $name, email: $email, password: $password) {
+      token
+      admin {
+        id
+        name
+        email
+      }
     }
   }
 `;
 
-const AddAdminForm = ({ formData, onChange, onSubmit }) => {
+const AddAdminForm = ({ formData, onChange }) => {
   const toast = useToast();
-  const [addAdmin, { loading }] = useMutation(ADD_ADMIN, {
-    onCompleted: () => {
+  const [signupAdmin, { loading }] = useMutation(SIGNUP_ADMIN, {
+    onCompleted: (data) => {
+      // You can use the returned data here if needed, for example:
+      // console.log(data.signup.admin);
       toast({
         title: 'Admin created successfully.',
         status: 'success',
         duration: 5000,
         isClosable: true,
       });
-      // Additional actions on completion, e.g., clear form or navigate
+      // You might want to clear form or redirect user after signup
     },
     onError: (error) => {
       toast({
@@ -38,7 +43,7 @@ const AddAdminForm = ({ formData, onChange, onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    addAdmin({ variables: { ...formData } });
+    signupAdmin({ variables: { ...formData } });
   };
 
   // Everything within your component function should be returned inside a single return statement.
