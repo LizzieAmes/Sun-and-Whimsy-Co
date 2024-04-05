@@ -21,10 +21,10 @@ const startApolloServer = async () => {
 
   // Serve static files from the React app in production
   if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../client/build'))); // Adjusted to point to 'build'
+    app.use(express.static(path.join(__dirname, '../client/dist')));
 
     app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, '../client/build/index.html')); // Adjusted to point to 'build'
+      res.sendFile(path.join(__dirname, '../client/dist/index.html'));
     });
   } else {
     // In development, you might not need to serve static files here,
