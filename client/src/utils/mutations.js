@@ -26,4 +26,5 @@ export const ADD_PRODUCT = gql`
       imageUrl
     }
   }
+
 `;
