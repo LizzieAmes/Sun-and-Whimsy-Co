@@ -1,48 +1,67 @@
 import React, { useState, useEffect } from 'react';
-import { useDisclosure } from '@chakra-ui/react';
+import { box } from '@chakra-ui/react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import: { 
+import: {
     orders,
-}  
+    container,
+    button,
+    ordersWithImageUrls,
+    useDisclosure,
 
-    const OrdersPage = () => {
+};
+
+import { orderSchema } from '../models/order.js';
+
+const OrdersPage = () => {
 const [orders, setOrders] = useState([]);
 const { isOpen, onOpen, onClose } = useDisclosure();
 
 useEffect(() => {
-    const setOrders = JSON.parse(localStorage.getItem('orders')) || [];
-    const ordersWithImagesUrl = storedOrders.map((product) => {
-        if () {
-            const imageUrl = URL.createObjectURL(order.image);
-            return { ...order, imageUrl };
+    const storedOrders = JSON.parse(localStorage.getItem('orders')) || [];
+    const ordersWithImagesUrl = storedOrders.map((order) => {
+        if (order.imageUrl) {
+            const imageUrl = URL.createObjectURL(order.imageUrl);
+            return { ...orders, imageUrl };
         }
-        return product;
+        return order;
     });
 
 setOrders(ordersWithImageUrls);
-} 
+
 return () => {
     orders.forEach((order) => {
         if (order.imageUrl) {
           URL.revokeObjectURL(order.imageUrl);
-}
-
-})}
+    }
+   });
+  };
+}, []);
+ 
+const styles = {
+    containerStyles: {
+        background: 'lightblue' ,
+    },
+};
 
 return (
-<box>
-<button>
-    order
-</button>
+<box style={styles.containerStyles} className="container">
+<h1>Orders</h1>
+<ul>
+    {orders.map((order) => (
+<li key={order._id}>
+<strong>Order Date:</strong> {order.date}
+<br />
+<strong>User:</strong> {order.user.name}
+<br />
+<strong>Status:</strong> {order.status}
+<br />
+//*Display other order details
+{order.imageUrl && <img src={order.imageUrl} alt={order.name} />}
+        </li>
+    ))}
+</ul>
 </box>
-
-{orders.map}
-
-
-)
-
+);
+}
 
 export default OrdersPage;
-
-
-//mongodb://localhost:27017
