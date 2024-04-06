@@ -26,6 +26,7 @@ export const ADD_PRODUCT = gql`
       imageUrl
     }
   }
+
 `;
 
 export const DELETE_PRODUCT = gql`
