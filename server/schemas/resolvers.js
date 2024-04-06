@@ -1,6 +1,8 @@
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { Admin, Product, Order } = require('../models');
+
+require('dotenv').config()
 
 const resolvers = {
   Query: {
@@ -64,10 +66,18 @@ const resolvers = {
       return product;
     },
     // Delete product
-    deleteProduct: async (_, { id }) => {
-      const product = await Product.findByIdAndRemove(id);
-      return product ? true : false;
-    },
+deleteProduct: async (_, { id }) => {
+  try {
+    const deletedProduct = await Product.findOneAndDelete({ _id: id });
+    if (!deletedProduct) {
+      throw new Error("Product not found or already deleted");
+    }
+    return deletedProduct; // Return the deleted document
+  } catch (error) {
+    throw new Error(error.message);
+  }
+},
+
     // Create order
     createOrder: async (_, { products }) => {
       const order = new Order({ products });
