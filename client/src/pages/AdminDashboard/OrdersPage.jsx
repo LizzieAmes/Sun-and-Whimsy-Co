@@ -1,34 +1,30 @@
 import React, { useState, useEffect } from 'react';
+import { useDisclosure } from '@chakra-ui/react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import: { 
     orders,
-
-
-
-
-
-}  '@chakra-ui/react'
-    import { useDisclosure } from '@chakra-ui/react';
+}  
 
     const OrdersPage = () => {
 const [orders, setOrders] = useState([]);
 const { isOpen, onOpen, onClose } = useDisclosure();
 
 useEffect(() => {
-    const fetchOrders = JSON.parse(localStorage.getItem('orders')) || [];
+    const setOrders = JSON.parse(localStorage.getItem('orders')) || [];
     const ordersWithImagesUrl = storedOrders.map((product) => {
         if () {
             const imageUrl = URL.createObjectURL(order.image);
-            return { ...product, imageUrl };
+            return { ...order, imageUrl };
         }
         return product;
     });
 
 setOrders(ordersWithImageUrls);
-
+} 
 return () => {
-    ordersWithImageUrls.forEach((order) => {
+    orders.forEach((order) => {
         if (order.imageUrl) {
-          URL.revokeObjectURL(.imageUrl);
+          URL.revokeObjectURL(order.imageUrl);
 }
 
 })}
