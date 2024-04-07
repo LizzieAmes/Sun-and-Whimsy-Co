@@ -26,7 +26,6 @@ export const ADD_PRODUCT = gql`
       imageUrl
     }
   }
-
 `;
 
 export const DELETE_PRODUCT = gql`
@@ -44,7 +43,7 @@ export const UPDATE_PRODUCT = gql`
     $description: String!
     $price: Float!
     $categories: [String]!
-    $stock: Int!
+    $stock: PositiveInt
     $imageUrl: String
   ) {
     updateProduct(
