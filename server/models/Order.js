@@ -11,11 +11,11 @@ const orderSchema = new mongoose.Schema({
   // Include payment confirmation, shipping details, etc.
 
 paymentConfirmation: { type: String }, //'Payment details
-shippingDetails: { //object details
+shippingDetails: { //shipping object details
   address: { type: String, required: true },
-  city: { type: String, required: true }, // add state, postal etc.
+  city: { type: String, required: true },
   
-  //add more details?
+  //add more shipping details as needed (state, postal, etc.)
 }
 
 });
