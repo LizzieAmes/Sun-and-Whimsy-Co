@@ -1,9 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { Box, useDisclosure } from '@chakra-ui/react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import: { orderSchema } form '../models/order';
-
+import { orderSchema } form '../server/models/Order.js';
 
 const OrdersPage = () => {
 const [orders, setOrders] = useState([]);
@@ -60,3 +58,4 @@ return (
     };
 
 export default OrdersPage;
+>>>>>>> develop
