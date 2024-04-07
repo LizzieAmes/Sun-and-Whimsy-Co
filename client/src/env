@@ -1,0 +1,9 @@
+JWT_SECRET=simplesecret
+MONGO_URI=mongodb://localhost:27017/sunAndWhimsyDb
+PORT=4000
+
+
+
+
+
+

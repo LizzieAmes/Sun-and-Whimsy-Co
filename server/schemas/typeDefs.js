@@ -1,8 +1,8 @@
-const { gql } = require('apollo-server-express');
-const { DateTime } = require('graphql-scalars');
+
+// const { DateTime } = require('graphql-scalars');
 
 // GraphQL schema definitions
-const typeDefs = gql`
+const typeDefs = `
   scalar DateTime
   scalar PositiveInt
 
@@ -88,4 +88,4 @@ const typeDefs = gql`
   }
 `;
 
-module.exports = { typeDefs };
+module.exports = typeDefs;

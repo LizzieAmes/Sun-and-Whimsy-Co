@@ -8,11 +8,26 @@
     "dev": "concurrently \"cd server && npm run watch\" \"cd client && npm run dev\"",
     "install": "cd server && npm i && cd ../client && npm i",
     "seed": "cd server && npm run seed",
+<<<<<<< HEAD
     "build": "cd client && npm run build"
+=======
+    "build": "cd client && npm run build",
+    "frontend": "vite"
+>>>>>>> develop
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+<<<<<<< HEAD
     "concurrently": "^5.3.0"
+=======
+    "concurrently": "^5.3.0",
+    "jest": "^29.7.0"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.9.10",
+    "bcrypt": "^5.1.1",
+    "graphql": "^16.8.1"
+>>>>>>> develop
   }
 }
