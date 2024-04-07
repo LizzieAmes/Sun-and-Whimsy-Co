@@ -1,142 +1,91 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Button,
   FormControl,
   FormLabel,
   Input,
-  Textarea,
   NumberInput,
   NumberInputField,
-  FormHelperText,
   Select,
+  Textarea,
   useToast,
 } from '@chakra-ui/react';
+import { useMutation } from '@apollo/client';
+import { ADD_PRODUCT } from '../utils/mutations';
 import { useNavigate } from 'react-router-dom';
 
 const AddProductForm = () => {
   const [product, setProduct] = useState({
     name: '',
     description: '',
-    price: '',
-    inventory: '',
-    image: null,
+    price: 0,
+    inventory: 0,
+    image: '',
+    categories: [],
     sizes: [],
-    type: '',
-    packSize: '',
   });
-
   const [selectedType, setSelectedType] = useState('');
   const toast = useToast();
   const navigate = useNavigate();
+  const [addProduct, { loading }] = useMutation(ADD_PRODUCT);
 
-  const handleInputChange = ({ target: { name, value } }) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
     setProduct({ ...product, [name]: value });
   };
 
-  const handleImageChange = (e) => {
-    if (e.target.files[0]) {
-      setProduct({ ...product, image: e.target.files[0] });
-    }
-  };
-
-  const handleSizeChange = (size, valueString) => {
-    const newSizeArray = product.sizes.map((s) =>
-      s.size === size ? { ...s, count: valueString } : s
-    );
-    setProduct({ ...product, sizes: newSizeArray });
-  };
-
   const handleTypeChange = (e) => {
-    const type = e.target.value;
-    setSelectedType(type);
-    setProduct({
-      ...product,
-      type,
-      sizes:
-        type === 'clothes'
-          ? [
-              { size: '12M', count: '' },
-              { size: '18M', count: '' },
-              { size: '2T', count: '' },
-              { size: '3T', count: '' },
-              { size: '4T', count: '' },
-              { size: '5T', count: '' },
-              { size: 'Adult S', count: '' },
-              { size: 'Adult M', count: '' },
-              { size: 'Adult L', count: '' },
-              { size: 'Adult XL', count: '' },
-            ]
-          : [],
-    });
+    const newType = e.target.value;
+    setSelectedType(newType);
+    setProduct((prevState) => ({
+      ...prevState,
+      categories: [newType],
+      sizes: newType === 'clothes' ? prevState.sizes : [],
+    }));
   };
 
-  useEffect(() => {
-    if (selectedType === 'clothes') {
-      const totalInventory = product.sizes.reduce(
-        (acc, curr) => acc + Number(curr.count || 0),
-        0
-      );
-      setProduct((prev) => ({ ...prev, inventory: totalInventory.toString() }));
-    }
-  }, [product.sizes, selectedType]);
+  const handleAddSize = () => {
+    setProduct((prevState) => ({
+      ...prevState,
+      sizes: [...prevState.sizes, { size: '', count: 0 }],
+    }));
+  };
 
-  const resetForm = () => {
-    setProduct({
-      name: '',
-      description: '',
-      price: '',
-      inventory: '',
-      image: null,
-      sizes: [],
-      type: '',
-      packSize: '',
-    });
-    setSelectedType('');
+  const handleSizeChange = (index, field, value) => {
+    const updatedSizes = [...product.sizes];
+    updatedSizes[index][field] = value;
+    setProduct({ ...product, sizes: updatedSizes });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const existingProducts = JSON.parse(localStorage.getItem('products')) || [];
-    const newProducts = [...existingProducts, product];
-    localStorage.setItem('products', JSON.stringify(newProducts));
 
-    toast({
-      title: 'Product added.',
-      description: 'Select an option below.',
-      status: 'success',
-      duration: 5000,
-      isClosable: true,
-      position: 'top',
-      render: ({ onClose }) => (
-        <Box color="white" p={3} bg="blue.500" borderRadius="md">
-          <p>Product added successfully.</p>
-          <Button
-            size="sm"
-            onClick={() => {
-              resetForm();
-              onClose();
-            }}
-            mt={2}
-          >
-            Add Another
-          </Button>
-          <Button
-            size="sm"
-            onClick={() => {
-              navigate('/inventory');
-              onClose();
-            }}
-            mt={2}
-            ml={2}
-          >
-            View Inventory
-          </Button>
-        </Box>
-      ),
-    });
+    let variables = {
+      ...product,
+      price: parseFloat(product.price),
+      stock: parseInt(product.inventory),
+    };
 
-    resetForm();
+    try {
+      await addProduct({ variables });
+      toast({
+        title: 'Product added',
+        description: 'Your product was successfully added!',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+      navigate('/inventory'); // Navigate to the inventory page
+    } catch (error) {
+      toast({
+        title: 'Error adding product',
+        description: error.message,
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -148,7 +97,7 @@ const AddProductForm = () => {
       borderRadius="lg"
       boxShadow="sm"
     >
-      <FormControl id="itemType" isRequired mt={4}>
+      <FormControl isRequired mt={4}>
         <FormLabel>Item Type</FormLabel>
         <Select
           placeholder="Select type"
@@ -160,79 +109,74 @@ const AddProductForm = () => {
           <option value="accessories">Accessories</option>
         </Select>
       </FormControl>
-
-      {/* Conditional render based on selectedType */}
       {selectedType === 'clothes' &&
-        product.sizes.map((s, index) => (
-          <FormControl key={index} mt={4}>
-            <FormLabel>{s.size} Size Inventory</FormLabel>
-            <NumberInput
-              min={0}
-              onChange={(valueString) => handleSizeChange(s.size, valueString)}
-            >
-              <NumberInputField name={`size-${s.size}`} value={s.count} />
-            </NumberInput>
-          </FormControl>
+        product.sizes.map((size, index) => (
+          <Box key={index} display="flex" mt={4}>
+            <FormControl isRequired>
+              <FormLabel>Size</FormLabel>
+              <Input
+                value={size.size}
+                onChange={(e) =>
+                  handleSizeChange(index, 'size', e.target.value)
+                }
+              />
+            </FormControl>
+            <FormControl isRequired ml={4}>
+              <FormLabel>Count</FormLabel>
+              <NumberInput min={0} defaultValue={size.count}>
+                <NumberInputField
+                  onChange={(e) =>
+                    handleSizeChange(index, 'count', parseInt(e.target.value))
+                  }
+                />
+              </NumberInput>
+            </FormControl>
+          </Box>
         ))}
-
-      {selectedType === 'stickers' && (
-        <FormControl id="packSize" isRequired mt={4}>
-          <FormLabel>Pack Size</FormLabel>
-          <Input
-            name="packSize"
-            value={product.packSize}
-            onChange={handleInputChange}
-            placeholder="Number of stickers per pack"
-          />
-        </FormControl>
-      )}
-
-      <FormControl id="name" isRequired>
+      <Button
+        onClick={handleAddSize}
+        mt={2}
+        colorScheme="blue"
+        size="sm"
+        isDisabled={selectedType !== 'clothes'}
+      >
+        Add Size
+      </Button>
+      <FormControl isRequired mt={4}>
         <FormLabel>Name</FormLabel>
-        <Input
-          name="name"
-          value={product.name}
-          onChange={handleInputChange}
-          placeholder="Product Name"
-        />
+        <Input name="name" value={product.name} onChange={handleInputChange} />
       </FormControl>
-
-      <FormControl id="description" isRequired mt={4}>
+      <FormControl isRequired mt={4}>
         <FormLabel>Description</FormLabel>
         <Textarea
           name="description"
           value={product.description}
           onChange={handleInputChange}
-          placeholder="Product Description"
         />
       </FormControl>
-
-      <FormControl id="price" isRequired mt={4}>
+      <FormControl isRequired mt={4}>
         <FormLabel>Price</FormLabel>
         <Input
           name="price"
+          type="number"
           value={product.price}
           onChange={handleInputChange}
-          placeholder="Product Price"
         />
       </FormControl>
-
-      <FormControl id="inventory" isRequired mt={4}>
+      <FormControl isRequired mt={4}>
         <FormLabel>Inventory</FormLabel>
         <Input
           name="inventory"
+          type="number"
           value={product.inventory}
           onChange={handleInputChange}
-          placeholder="Total Inventory"
         />
       </FormControl>
-
-      <FormControl id="image" mt={4}>
-        <FormLabel>Product Image</FormLabel>
-        <Input type="file" name="image" onChange={handleImageChange} />
-      </FormControl>
-
-      <Button mt={4} colorScheme="teal" type="submit">
+      {/* <FormControl mt={4}> */}
+        {/* <FormLabel>Product Image</FormLabel>
+        <Input name="image" type="file" onChange={handleImageChange} />
+      </FormControl> */}
+      <Button mt={4} colorScheme="teal" isLoading={loading} type="submit">
         Add Product
       </Button>
     </Box>
