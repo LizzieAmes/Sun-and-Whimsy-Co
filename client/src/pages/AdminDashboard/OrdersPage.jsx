@@ -45,17 +45,17 @@ return (
 <br />
 <strong>User:</strong> {order.user.name}
 <br />
-<strong>Product:</strong> {order.product}
+<strong>Product:</strong> {order.product.name}
+<br />
 <strong>Status:</strong> {order.status}
 <br />
-<br />
 //*Display other order details
-{order.imageUrl && <img src={order.imageUrl} alt={order.name} />}
+{order.imageUrl && <img src={order.imageUrl} alt={order.product.name} />}
         </li>
     ))}
 </ul>
 </Box>
 );
-}
+    };
 
 export default OrdersPage;
