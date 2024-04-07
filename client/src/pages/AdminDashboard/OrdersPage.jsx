@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, useDisclosure } from '@chakra-ui/react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import: { orderSchema } form '../models/order';
+import { orderSchema } from '../models/order';
 
 
 const OrdersPage = () => {
@@ -41,7 +41,7 @@ return (
 <ul>
     {orders.map((order) => (
 <li key={order._id}>
-<strong>Order Date:</strong> {order.date}
+<strong>Order Date:</strong> {order.date} //placeholders
 <br />
 <strong>User:</strong> {order.user.name}
 <br />
@@ -51,7 +51,7 @@ return (
 <br />
 //*Display other order details
 {order.imageUrl && <img src={order.imageUrl} alt={order.product.name} />}
-        </li>
+</li>
     ))}
 </ul>
 </Box>
