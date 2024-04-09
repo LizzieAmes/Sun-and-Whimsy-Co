@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const userDB = require("../db/userDB");
+// const userDB = require("../db/userDB");
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
