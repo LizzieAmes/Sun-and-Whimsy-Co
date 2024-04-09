@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { Admin, Product, Order } = require('../models');
-require("dotenv").config()
+require('dotenv').config();
 
-require('dotenv').config()
+require('dotenv').config();
 
 const resolvers = {
   Query: {
@@ -17,26 +17,26 @@ const resolvers = {
       //const hashedPassword = await bcrypt.hash(password, 10);
       //const admin = new Admin({ name, email, password: hashedPassword });
       //await admin.save();
-      const admin = await Admin.create({ name, email, password })
-      console.log(admin)
+      const admin = await Admin.create({ name, email, password });
+      console.log(admin);
       // const token = jwt.sign(
       //   {  data:{name:admin.name, email:admin.email, admin:admin._id}},
-         
+
       //     process.env.JWT_SECRET
       // ); // Use an environment variable for the secret key
-      
+
       const token = jwt.sign(
         {
           data: {
             name: admin.name,
             email: admin.email,
-            _id: admin._id
-          }        
+            _id: admin._id,
+          },
         },
         process.env.JWT_SECRET
-      )
+      );
 
-      console.log(token)
+      console.log(token);
       return { token, admin };
     },
     // Admin login
@@ -84,17 +84,17 @@ const resolvers = {
       return product;
     },
     // Delete product
-deleteProduct: async (_, { id }) => {
-  try {
-    const deletedProduct = await Product.findOneAndDelete({ _id: id });
-    if (!deletedProduct) {
-      throw new Error("Product not found or already deleted");
-    }
-    return deletedProduct; // Return the deleted document
-  } catch (error) {
-    throw new Error(error.message);
-  }
-},
+    deleteProduct: async (_, { id }) => {
+      try {
+        const deletedProduct = await Product.findOneAndDelete({ _id: id });
+        if (!deletedProduct) {
+          throw new Error('Product not found or already deleted');
+        }
+        return deletedProduct; // Return the deleted document
+      } catch (error) {
+        throw new Error(error.message);
+      }
+    },
 
     // Create order
     createOrder: async (_, { products }) => {
