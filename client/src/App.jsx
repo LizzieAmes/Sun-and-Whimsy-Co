@@ -11,7 +11,8 @@ import InventoryPage from './pages/InventoryPage';
 import { setContext } from '@apollo/client/link/context'
 import { Outlet } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-
+import { useLocation } from 'react-router-dom';
+import Layout from './components/Layout';
 const httpLink = createHttpLink({
   uri: '/graphql',
 })
@@ -39,28 +40,13 @@ function App() {
     <ApolloProvider client={client}>
       <ChakraProvider>
         <Router>
-          <Flex flexDirection="column" minHeight="100vh">
-            <Header />
-            <Box as="main" flex="1">
-              <Routes>
-                <Route
-                  path="/admin"
-                  element={
-                    <ProtectedRoute>
-                      <AdminDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="/" element={<LoginPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/inventory" element={<InventoryPage />} />
-
-                {/* More routes */}
-              </Routes>
-              <Outlet />
-            </Box>
-            <Footer />
-          </Flex>
+          <Routes>
+            <Route path="/" element={<Layout><LoginPage /></Layout>} />
+            <Route path="/login" element={<Layout><LoginPage /></Layout>} />
+            <Route path="/admin" element={<Layout><ProtectedRoute><AdminDashboard /></ProtectedRoute></Layout>} />
+            <Route path="/inventory" element={<Layout><InventoryPage /></Layout>} />
+            {/* More routes */}
+          </Routes>
         </Router>
       </ChakraProvider>
     </ApolloProvider>
