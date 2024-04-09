@@ -26,6 +26,7 @@ import {
 } from '@chakra-ui/react';
 import AddProductForm from '../components/AddProductForm';
 import EditProductForm from '../components/EditProductForm';
+import Layout from '../components/Layout';
 
 const InventoryPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -74,142 +75,144 @@ const InventoryPage = () => {
   if (error) return <p>Error loading products!</p>;
 
   return (
-    <Box paddingX="5%">
-      <Heading as="h1" size="xl" textAlign="center" my={5}>
-        ✨ Inventory ✨
-      </Heading>
-      <Flex justifyContent="center" my={5}>
-        <Button onClick={onOpen} colorScheme="teal" size="lg" fontSize="lg">
-          Add New Product
-        </Button>
-      </Flex>
+    <Layout>
+      <Box paddingX="5%">
+        <Heading as="h1" size="xl" textAlign="center" my={5}>
+          ✨ Inventory ✨
+        </Heading>
+        <Flex justifyContent="center" my={5}>
+          <Button onClick={onOpen} colorScheme="teal" size="lg" fontSize="lg">
+            Add New Product
+          </Button>
+        </Flex>
 
-      {Object.entries(productsByCategory).map(([category, products]) => (
-        <Box key={category} mb={10}>
-          <Heading
-            size="lg"
-            my={5}
-            textAlign="center"
-            textTransform="capitalize"
-          >
-            {category}
-          </Heading>
-          <SimpleGrid
-            columns={{ sm: 1, md: 2, lg: 3 }}
-            spacing="40px"
-            padding="20px"
-          >
-            {products.map((product) => (
-              <Box
-                key={product.id}
-                p={5}
-                shadow="md"
-                borderWidth="1px"
-                borderRadius="lg"
-                overflow="hidden"
-                d="flex"
-                flexDirection="column"
-                justifyContent="space-between"
-                height="100%"
-                minWidth="0"
-              >
-                <Heading fontSize="lg" mb={2}>
-                  {product.name}
-                </Heading>
-                <Text isTruncated mb={2}>
-                  Description: {product.description}
-                </Text>
-                <Text mb={2}>Price: ${product.price.toFixed(2)}</Text>
-                <Text mb={4}>Stock: {product.stock}</Text>
-                {product.imageUrl && (
-                  <Image
-                    src={product.imageUrl}
-                    alt={product.name}
-                    boxSize="200px"
-                    mb={4}
-                    objectFit="cover"
-                  />
-                )}
-                <Flex justifyContent="left" gap="4" mt={4}>
-                  {' '}
-                  <Button
-                    colorScheme="yellow"
-                    onClick={() => handleEdit(product)}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    colorScheme="red"
-                    onClick={() => {
-                      setIsAlertOpen(true);
-                      setProductToDelete(product.id);
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </Flex>
-              </Box>
-            ))}
-          </SimpleGrid>
-        </Box>
-      ))}
+        {Object.entries(productsByCategory).map(([category, products]) => (
+          <Box key={category} mb={10}>
+            <Heading
+              size="lg"
+              my={5}
+              textAlign="center"
+              textTransform="capitalize"
+            >
+              {category}
+            </Heading>
+            <SimpleGrid
+              columns={{ sm: 1, md: 2, lg: 3 }}
+              spacing="40px"
+              padding="20px"
+            >
+              {products.map((product) => (
+                <Box
+                  key={product.id}
+                  p={5}
+                  shadow="md"
+                  borderWidth="1px"
+                  borderRadius="lg"
+                  overflow="hidden"
+                  d="flex"
+                  flexDirection="column"
+                  justifyContent="space-between"
+                  height="100%"
+                  minWidth="0"
+                >
+                  <Heading fontSize="lg" mb={2}>
+                    {product.name}
+                  </Heading>
+                  <Text mb={2}>
+                    Description: {product.description}
+                  </Text>
+                  <Text mb={2}>Price: ${product.price.toFixed(2)}</Text>
+                  <Text mb={4}>Stock: {product.stock}</Text>
+                  {product.imageUrl && (
+                    <Image
+                      src={product.imageUrl}
+                      alt={product.name}
+                      boxSize="200px"
+                      mb={4}
+                      objectFit="cover"
+                    />
+                  )}
+                  <Flex justifyContent="left" gap="4" mt={4}>
+                    {' '}
+                    <Button
+                      colorScheme="yellow"
+                      onClick={() => handleEdit(product)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      colorScheme="red"
+                      onClick={() => {
+                        setIsAlertOpen(true);
+                        setProductToDelete(product.id);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </Flex>
+                </Box>
+              ))}
+            </SimpleGrid>
+          </Box>
+        ))}
 
-      <AlertDialog
-        isOpen={isAlertOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={onCloseAlert}
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Delete Product
-            </AlertDialogHeader>
+        <AlertDialog
+          isOpen={isAlertOpen}
+          leastDestructiveRef={cancelRef}
+          onClose={onCloseAlert}
+        >
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                Delete Product
+              </AlertDialogHeader>
 
-            <AlertDialogBody>
-              Are you sure? You can't undo this action afterwards.
-            </AlertDialogBody>
+              <AlertDialogBody>
+                Are you sure? You can't undo this action afterwards.
+              </AlertDialogBody>
 
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onCloseAlert}>
-                Go Back
-              </Button>
-              <Button
-                colorScheme="red"
-                onClick={() => {
-                  deleteProduct({ variables: { id: productToDelete } })
-                    .then(() => {
-                      onCloseAlert();
-                    })
-                    .catch((error) => {
-                      console.error('Error deleting product:', error.message);
-                    });
-                }}
-                ml={3}
-              >
-                Delete
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
+              <AlertDialogFooter>
+                <Button ref={cancelRef} onClick={onCloseAlert}>
+                  Go Back
+                </Button>
+                <Button
+                  colorScheme="red"
+                  onClick={() => {
+                    deleteProduct({ variables: { id: productToDelete } })
+                      .then(() => {
+                        onCloseAlert();
+                      })
+                      .catch((error) => {
+                        console.error('Error deleting product:', error.message);
+                      });
+                  }}
+                  ml={3}
+                >
+                  Delete
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>
-            {selectedProduct ? 'Edit Product' : 'Add a New Product'}
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            {selectedProduct ? (
-              <EditProductForm product={selectedProduct} onClose={onClose} />
-            ) : (
-              <AddProductForm onClose={onClose} />
-            )}
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    </Box>
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>
+              {selectedProduct ? 'Edit Product' : 'Add a New Product'}
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody pb={6}>
+              {selectedProduct ? (
+                <EditProductForm product={selectedProduct} onClose={onClose} />
+              ) : (
+                <AddProductForm onClose={onClose} />
+              )}
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      </Box>
+    </Layout>
   );
 };
 export default InventoryPage;

@@ -19,6 +19,7 @@ import {
 import AddAdminForm from '../../components/AddAdminForm';
 import SalesChart from '../../components/SalesChart';
 import { useMutation, gql } from '@apollo/client';
+import Layout from '../../components/Layout';
 
 // GraphQL mutation
 const SIGNUP_ADMIN = gql`
@@ -71,40 +72,52 @@ function AdminDashboard() {
   ];
 
   return (
-    <Box p={5}>
-      <Flex justify="space-between" align="center" mb={5}>
-        <Heading as="h1" size="xl">Admin Dashboard 🌟</Heading>
-        <Button onClick={onOpen} colorScheme="teal">Add New Admin</Button>
-      </Flex>
+    <Layout>
+      <Box p={5}>
+        <Flex justify="space-between" align="center" mb={5}>
+          <Heading as="h1" size="xl">
+            Admin Dashboard 🌟
+          </Heading>
+          <Button onClick={onOpen} colorScheme="teal">
+            Add New Admin
+          </Button>
+        </Flex>
 
-      <SimpleGrid columns={[1, null, 3]} spacing="40px" mb={5}>
-        {stats.map((stat, index) => (
-          <Stat key={index} p={5} shadow="md" borderWidth="1px" borderRadius="lg">
-            <StatLabel>{stat.label}</StatLabel>
-            <StatNumber>{stat.number}</StatNumber>
-          </Stat>
-        ))}
-      </SimpleGrid>
+        <SimpleGrid columns={[1, null, 3]} spacing="40px" mb={5}>
+          {stats.map((stat, index) => (
+            <Stat
+              key={index}
+              p={5}
+              shadow="md"
+              borderWidth="1px"
+              borderRadius="lg"
+            >
+              <StatLabel>{stat.label}</StatLabel>
+              <StatNumber>{stat.number}</StatNumber>
+            </Stat>
+          ))}
+        </SimpleGrid>
 
-      {/* Assuming SalesChart is a component you've created */}
-      <SalesChart data={salesData} />
+        {/* Assuming SalesChart is a component you've created */}
+        <SalesChart data={salesData} />
 
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Add a New Admin</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <AddAdminForm 
-              formData={formData} 
-              onChange={handleChange} 
-              onSubmit={handleSubmit} 
-              loading={loading}
-            />
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    </Box>
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Add a New Admin</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody pb={6}>
+              <AddAdminForm
+                formData={formData}
+                onChange={handleChange}
+                onSubmit={handleSubmit}
+                loading={loading}
+              />
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      </Box>
+    </Layout>
   );
 }
 export default AdminDashboard;
