@@ -12,8 +12,13 @@ import {
 } from '@chakra-ui/react';
 
 const Header = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const bgColor = useColorModeValue('pink.100', 'pink.700'); // Light mode pink, dark mode deeper pink
   // const isLogginIn = true;
+const handleLogout = () => {
+  setIsLoggedIn(false);
+};
 
   return (
     <Flex
