@@ -7,7 +7,11 @@ import {
   Input,
   Button,
   useToast,
+  Text,
+  Image,
+  Center
 } from '@chakra-ui/react';
+import logo from '../assets/images/logo.png'; // Adjust the path as needed
 
 function LoginPage() {
   const [credentials, setCredentials] = useState({
@@ -37,6 +41,14 @@ const handleSubmit = async (e) => {
 };
 
   return (
+    <Center flexDirection="column" minH="100vh" p={4}>
+      <Image
+        src={logo}
+        alt="Logo"
+        mb={4} // Margin bottom for some space below the logo
+        boxSize="100px" // Adjust the size as needed
+      />
+      <Text fontSize="2xl" mb={4}>Login to the Admin Dashboard</Text>
     <Box
       maxW="sm"
       borderWidth="1px"
@@ -68,6 +80,7 @@ const handleSubmit = async (e) => {
         </Button>
       </form>
     </Box>
+    </Center>
   );
 }
 
