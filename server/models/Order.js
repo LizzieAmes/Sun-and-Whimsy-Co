@@ -21,4 +21,3 @@ shippingDetails: { //shipping object details
 });
 
 module.exports = mongoose.model('Order', orderSchema);
-
