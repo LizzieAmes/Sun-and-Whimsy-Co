@@ -48,12 +48,9 @@ const AddProductForm = () => {
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     try {
-      // Fetch the signed URL from server
-      const { data } = await axios.get(
-        'http://localhost:3001/api/cloudinary/upload-url'
-      );
+     const { data } = await axios.get('/api/cloudinary/upload-url');
 
-      const imageUrl = `https://res.cloudinary.com/dsnhcqck0/image/upload/t_media_lib_thumb/${data.signature}/${file.name}`;
+     const imageUrl = `https://res.cloudinary.com/dsnhcqck0/image/upload/t_media_lib_thumb/${data.signature}/${file.name}`;
 
       const formData = new FormData();
       formData.append('file', file);
