@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './Header.css';
 import logo from '../assets/images/logo.png';
+import AuthService from '../utils/auth';
+
 import {
   Box,
   Flex,
@@ -46,7 +48,8 @@ const Header = () => {
         <Button as={Link} to="/orders" variant="ghost" mr={4}>
           Orders
         </Button>
-        <Button colorScheme="pink">Logout</Button>
+        
+        <Button colorScheme="pink" onClick={() => AuthService.logout()}>Logout</Button>
         {/* {isLoggedIn && <Button colorScheme="pink">Logout</Button>} */}
       </Flex>
     </Flex>
