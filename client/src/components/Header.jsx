@@ -44,9 +44,6 @@ const Header = () => {
         <Button as={Link} to="/inventory" variant="ghost" mr={4}>
           Inventory
         </Button>
-        <Button as={Link} to="/orders" variant="ghost" mr={4}>
-          Orders
-        </Button>
         
         <Button colorScheme="pink" onClick={() => AuthService.logout()}>Logout</Button>
         {/* {isLoggedIn && <Button colorScheme="pink">Logout</Button>} */}

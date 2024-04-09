@@ -65,3 +65,18 @@ export const UPDATE_PRODUCT = gql`
     }
   }
 `;
+
+export const LOGIN_ADMIN = gql`
+  mutation LoginAdmin($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      token
+      admin {
+        id
+        name
+        email
+      }
+    }
+  }
+`;
+
+

@@ -1,7 +1,4 @@
 
-// const { DateTime } = require('graphql-scalars');
-
-// GraphQL schema definitions
 const typeDefs = `
   scalar DateTime
   scalar PositiveInt

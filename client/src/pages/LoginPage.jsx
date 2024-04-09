@@ -11,11 +11,14 @@ import {
   Image,
   Center
 } from '@chakra-ui/react';
-import logo from '../assets/images/logo.png'; // Adjust the path as needed
+import logo from '../assets/images/logo.png';
+import { LOGIN_ADMIN } from '../utils/mutations';
+import { useMutation } from '@apollo/client';
+
 
 function LoginPage() {
   const [credentials, setCredentials] = useState({
-    username: '',
+    email: '',
     password: '',
   });
   const navigate = useNavigate();
@@ -26,18 +29,29 @@ function LoginPage() {
     setCredentials({ ...credentials, [name]: value });
   };
 
+const [loginAdmin, { loading: loginLoading }] = useMutation(LOGIN_ADMIN, {
+  onCompleted: (data) => {
+    localStorage.setItem('authToken', data.login.token); // Save the token
+    toast({ title: 'Login successful', status: 'success' });
+    navigate('/admin');
+  },
+  onError: (error) => {
+    toast({
+      title: 'Login failed',
+      description: error.message,
+      status: 'error',
+    });
+  },
+});
+
 const handleSubmit = async (e) => {
   e.preventDefault();
-  // This is a placeholder for actual authentication logic
-  if (credentials.username === 'admin' && credentials.password === 'password') {
-    // Simulate setting an authentication token upon successful login
-    localStorage.setItem('authToken', 'simulatedAuthToken');
-
-    toast({ title: 'Login successful', status: 'success' });
-    navigate('/admin'); // Navigate to the AdminDashboard upon successful login
-  } else {
-    toast({ title: 'Invalid credentials', status: 'error' });
-  }
+  loginAdmin({
+    variables: {
+      email: credentials.email, 
+      password: credentials.password,
+    },
+  });
 };
 
   return (
@@ -45,8 +59,8 @@ const handleSubmit = async (e) => {
       <Image
         src={logo}
         alt="Logo"
-        mb={4} // Margin bottom for some space below the logo
-        boxSize="100px" // Adjust the size as needed
+        mb={4} 
+        boxSize="100px" 
       />
       <Text fontSize="2xl" mb={4}>Login to the Admin Dashboard</Text>
     <Box
@@ -59,10 +73,11 @@ const handleSubmit = async (e) => {
     >
       <form onSubmit={handleSubmit}>
         <FormControl id="username" isRequired>
-          <FormLabel>Username</FormLabel>
+          <FormLabel>Email</FormLabel>
           <Input
-            name="username"
-            value={credentials.username}
+            name="email"
+            type="email"
+            value={credentials.email}
             onChange={handleChange}
           />
         </FormControl>
