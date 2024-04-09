@@ -1,4 +1,3 @@
-
 // const { DateTime } = require('graphql-scalars');
 
 // GraphQL schema definitions
@@ -7,6 +6,8 @@ const typeDefs = `
   scalar PositiveInt
 
   type Query {
+    users: [User]
+    user(id: ID!): User
     admins: [Admin]
     admin(id: ID!): Admin
     products: [Product]
@@ -18,6 +19,8 @@ const typeDefs = `
   type Mutation {
     signup(name: String!, email: String!, password: String!): AuthPayload
     login(email: String!, password: String!): AuthPayload
+    signupUser(name: String!, email: String!, password: String!): AuthPayload
+    loginUser(email: String!, password: String!): AuthPayload
     addProduct(
       name: String!
       description: String!
@@ -77,6 +80,15 @@ const typeDefs = `
     status: String!
   }
 
+  type User {
+    id: ID!
+    name: String!
+    email: String!
+    password: String!
+    address: String
+    paymentDetails: PaymentDetails
+  }
+  
   type ProductOrder {
     product: Product!
     quantity: PositiveInt!

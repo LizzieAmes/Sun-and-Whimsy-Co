@@ -12,18 +12,43 @@ const resolvers = {
     // Add more queries as needed
   },
   Mutation: {
+    signupUser: async (_, { name, email, password }) => {
+      if (!name) {
+        throw new Error("Variable $name is required");
+      }
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = await User.create({
+        name,
+        email,
+        password: hashedPassword,
+      });
+      console.log(newUser);
+      const token = jwt.sign(
+        {
+          data: {
+            name: newUser.name,
+            email: newUser.email,
+            _id: newUser._id,
+          },
+        },
+        process.env.JWT_SECRET
+      );
+      return { token, newUser };
+    },
+  },
+
     // Admin signup
     signup: async (_, { name, email, password }) => {
-      //const hashedPassword = await bcrypt.hash(password, 10);
-      //const admin = new Admin({ name, email, password: hashedPassword });
-      //await admin.save();
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const admin = new Admin({ name, email, password: hashedPassword });
+      await admin.save();
       const admin = await Admin.create({ name, email, password });
       console.log(admin);
-      // const token = jwt.sign(
-      //   {  data:{name:admin.name, email:admin.email, admin:admin._id}},
+      const token = jwt.sign(
+        {  data:{name:admin.name, email:admin.email, admin:admin._id}},
 
-      //     process.env.JWT_SECRET
-      // ); // Use an environment variable for the secret key
+          process.env.JWT_SECRET
+      ); // Use an environment variable for the secret key
 
       const token = jwt.sign(
         {
@@ -55,6 +80,26 @@ const resolvers = {
 
       return { token, admin };
     },
+
+    loginUser: async (_, { email, password }) => {
+      const existingUser = await User.findOne({ email });
+      if (!existingUser) {
+        throw new Error("No such user found");
+      }
+  
+  
+      const validPassword = await bcrypt.compare(password, existingUser.password);
+      if (!validPassword) {
+        throw new Error("Invalid password");
+      }
+  
+  
+      const token = jwt.sign({ userId: existingUser.id }, process.env.JWT_SECRET);
+  
+  
+      return { token, email: existingUser.email, user: existingUser };
+  },
+  
     // Add product
     addProduct: async (
       _,
@@ -103,7 +148,7 @@ const resolvers = {
       return order;
     },
     // Add more mutations as needed
-  },
-};
+  };
+
 
 module.exports = resolvers;
