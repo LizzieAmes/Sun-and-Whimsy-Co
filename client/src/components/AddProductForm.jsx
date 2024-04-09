@@ -1,242 +1,243 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
   Box,
   Button,
   FormControl,
   FormLabel,
   Input,
-  Textarea,
   NumberInput,
   NumberInputField,
-  FormHelperText,
   Select,
+  Textarea,
   useToast,
 } from '@chakra-ui/react';
+import { useMutation } from '@apollo/client';
+import { ADD_PRODUCT } from '../utils/mutations';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const AddProductForm = () => {
   const [product, setProduct] = useState({
     name: '',
     description: '',
-    price: '',
-    inventory: '',
-    image: null,
-    sizes: [],
-    type: '',
-    packSize: '',
+    price: 0,
+    inventory: 0,
+    image: '',
+    categories: [],
   });
-
   const [selectedType, setSelectedType] = useState('');
   const toast = useToast();
   const navigate = useNavigate();
+  const [addProduct, { loading }] = useMutation(ADD_PRODUCT);
+  const [imageURL, setImageURL] = useState('');
+   const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false); 
+   const cancelRef = useRef();
+   const onCloseAlertDialog = () => setIsAlertDialogOpen(false);
 
-  const handleInputChange = ({ target: { name, value } }) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
     setProduct({ ...product, [name]: value });
   };
 
-  const handleImageChange = (e) => {
-    if (e.target.files[0]) {
-      setProduct({ ...product, image: e.target.files[0] });
-    }
-  };
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    try {
+      // Fetch the signed URL from server
+      const { data } = await axios.get(
+        'http://localhost:3001/api/cloudinary/upload-url'
+      );
 
-  const handleSizeChange = (size, valueString) => {
-    const newSizeArray = product.sizes.map((s) =>
-      s.size === size ? { ...s, count: valueString } : s
-    );
-    setProduct({ ...product, sizes: newSizeArray });
+      const imageUrl = `https://res.cloudinary.com/dsnhcqck0/image/upload/t_media_lib_thumb/${data.signature}/${file.name}`;
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('timestamp', data.timestamp);
+      formData.append('api_key', data.apiKey);
+      formData.append('signature', data.signature);
+      formData.append('cloud_name', data.cloudName);
+      formData.append('upload_preset', 'sunandwhimsy');
+
+      // Upload the image directly to Cloudinary
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/dsnhcqck0/image/upload`,
+        formData
+      );
+
+      // Set the URL in state to be included when creating a new product
+      setImageURL(response.data.secure_url);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    }
   };
 
   const handleTypeChange = (e) => {
-    const type = e.target.value;
-    setSelectedType(type);
-    setProduct({
-      ...product,
-      type,
-      sizes:
-        type === 'clothes'
-          ? [
-              { size: '12M', count: '' },
-              { size: '18M', count: '' },
-              { size: '2T', count: '' },
-              { size: '3T', count: '' },
-              { size: '4T', count: '' },
-              { size: '5T', count: '' },
-              { size: 'Adult S', count: '' },
-              { size: 'Adult M', count: '' },
-              { size: 'Adult L', count: '' },
-              { size: 'Adult XL', count: '' },
-            ]
-          : [],
-    });
-  };
-
-  useEffect(() => {
-    if (selectedType === 'clothes') {
-      const totalInventory = product.sizes.reduce(
-        (acc, curr) => acc + Number(curr.count || 0),
-        0
-      );
-      setProduct((prev) => ({ ...prev, inventory: totalInventory.toString() }));
-    }
-  }, [product.sizes, selectedType]);
-
-  const resetForm = () => {
-    setProduct({
-      name: '',
-      description: '',
-      price: '',
-      inventory: '',
-      image: null,
-      sizes: [],
-      type: '',
-      packSize: '',
-    });
-    setSelectedType('');
+    const newType = e.target.value;
+    setSelectedType(newType);
+    setProduct((prevState) => ({
+      ...prevState,
+      categories: [newType],
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const existingProducts = JSON.parse(localStorage.getItem('products')) || [];
-    const newProducts = [...existingProducts, product];
-    localStorage.setItem('products', JSON.stringify(newProducts));
 
-    toast({
-      title: 'Product added.',
-      description: 'Select an option below.',
-      status: 'success',
-      duration: 5000,
-      isClosable: true,
-      position: 'top',
-      render: ({ onClose }) => (
-        <Box color="white" p={3} bg="blue.500" borderRadius="md">
-          <p>Product added successfully.</p>
-          <Button
-            size="sm"
-            onClick={() => {
-              resetForm();
-              onClose();
-            }}
-            mt={2}
-          >
-            Add Another
-          </Button>
-          <Button
-            size="sm"
-            onClick={() => {
-              navigate('/inventory');
-              onClose();
-            }}
-            mt={2}
-            ml={2}
-          >
-            View Inventory
-          </Button>
-        </Box>
-      ),
-    });
+    if (!imageURL) {
+      toast({
+        title: 'Error',
+        description:
+          'Please wait for the image to finish uploading before submitting.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
 
-    resetForm();
+    let variables = {
+      ...product,
+      price: parseFloat(product.price),
+      stock: parseInt(product.inventory),
+      imageUrl: imageURL,
+    };
+
+    try {
+      await addProduct({ variables });
+
+         setProduct({
+           name: '',
+           description: '',
+           price: 0,
+           inventory: 0,
+           image: '',
+           categories: [],
+         });
+         setImageURL('');
+
+
+      toast({
+        title: 'Product added',
+        description: 'Your product was successfully added!',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+
+      setIsAlertDialogOpen(true);
+
+
+    } catch (error) {
+
+      toast({
+        title: 'Error adding product',
+        description: error.message,
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
 
-  return (
-    <Box
-      as="form"
-      onSubmit={handleSubmit}
-      p={4}
-      borderWidth="1px"
-      borderRadius="lg"
-      boxShadow="sm"
+return (
+  <Box
+    as="form"
+    onSubmit={handleSubmit}
+    p={4}
+    borderWidth="1px"
+    borderRadius="lg"
+    boxShadow="sm"
+  >
+    <FormControl isRequired mt={4}>
+      <FormLabel>Item Type</FormLabel>
+      <Select
+        placeholder="Select type"
+        value={selectedType}
+        onChange={handleTypeChange}
+      >
+        <option value="stickers">Stickers</option>
+        <option value="clothes">Clothes</option>
+        <option value="accessories">Accessories</option>
+      </Select>
+    </FormControl>
+    <FormControl isRequired mt={4}>
+      <FormLabel>Name</FormLabel>
+      <Input name="name" value={product.name} onChange={handleInputChange} />
+    </FormControl>
+    <FormControl isRequired mt={4}>
+      <FormLabel>Description</FormLabel>
+      <Textarea
+        name="description"
+        value={product.description}
+        onChange={handleInputChange}
+      />
+    </FormControl>
+    <FormControl isRequired mt={4}>
+      <FormLabel>Price</FormLabel>
+      <Input
+        name="price"
+        type="number"
+        value={product.price}
+        onChange={handleInputChange}
+      />
+    </FormControl>
+    <FormControl isRequired mt={4}>
+      <FormLabel>Inventory</FormLabel>
+      <Input
+        name="inventory"
+        type="number"
+        value={product.inventory}
+        onChange={handleInputChange}
+      />
+    </FormControl>
+    <FormControl mt={4}>
+      <FormLabel>Product Image</FormLabel>
+      <Input name="image" type="file" onChange={handleImageChange} />
+    </FormControl>
+    <Button mt={4} colorScheme="teal" isLoading={loading} type="submit">
+      Add Product
+    </Button>
+    <AlertDialog
+      isOpen={isAlertDialogOpen}
+      leastDestructiveRef={cancelRef}
+      onClose={onCloseAlertDialog}
     >
-      <FormControl id="itemType" isRequired mt={4}>
-        <FormLabel>Item Type</FormLabel>
-        <Select
-          placeholder="Select type"
-          value={selectedType}
-          onChange={handleTypeChange}
-        >
-          <option value="stickers">Stickers</option>
-          <option value="clothes">Clothes</option>
-          <option value="accessories">Accessories</option>
-        </Select>
-      </FormControl>
+      <AlertDialogOverlay>
+        <AlertDialogContent>
+          <AlertDialogHeader fontSize="lg" fontWeight="bold">
+            Product Added Successfully!
+          </AlertDialogHeader>
 
-      {/* Conditional render based on selectedType */}
-      {selectedType === 'clothes' &&
-        product.sizes.map((s, index) => (
-          <FormControl key={index} mt={4}>
-            <FormLabel>{s.size} Size Inventory</FormLabel>
-            <NumberInput
-              min={0}
-              onChange={(valueString) => handleSizeChange(s.size, valueString)}
+          <AlertDialogBody>
+            Would you like to add another product or view the inventory page?
+          </AlertDialogBody>
+
+          <AlertDialogFooter>
+            <Button ref={cancelRef} onClick={onCloseAlertDialog}>
+              Add Another Product
+            </Button>
+            <Button
+              colorScheme="blue"
+              onClick={() => {
+                onCloseAlertDialog();
+                window.location.href = '/inventory';
+              }}
+              ml={3}
             >
-              <NumberInputField name={`size-${s.size}`} value={s.count} />
-            </NumberInput>
-          </FormControl>
-        ))}
+              View Inventory
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialogOverlay>
+    </AlertDialog>
+  </Box>
+);
 
-      {selectedType === 'stickers' && (
-        <FormControl id="packSize" isRequired mt={4}>
-          <FormLabel>Pack Size</FormLabel>
-          <Input
-            name="packSize"
-            value={product.packSize}
-            onChange={handleInputChange}
-            placeholder="Number of stickers per pack"
-          />
-        </FormControl>
-      )}
-
-      <FormControl id="name" isRequired>
-        <FormLabel>Name</FormLabel>
-        <Input
-          name="name"
-          value={product.name}
-          onChange={handleInputChange}
-          placeholder="Product Name"
-        />
-      </FormControl>
-
-      <FormControl id="description" isRequired mt={4}>
-        <FormLabel>Description</FormLabel>
-        <Textarea
-          name="description"
-          value={product.description}
-          onChange={handleInputChange}
-          placeholder="Product Description"
-        />
-      </FormControl>
-
-      <FormControl id="price" isRequired mt={4}>
-        <FormLabel>Price</FormLabel>
-        <Input
-          name="price"
-          value={product.price}
-          onChange={handleInputChange}
-          placeholder="Product Price"
-        />
-      </FormControl>
-
-      <FormControl id="inventory" isRequired mt={4}>
-        <FormLabel>Inventory</FormLabel>
-        <Input
-          name="inventory"
-          value={product.inventory}
-          onChange={handleInputChange}
-          placeholder="Total Inventory"
-        />
-      </FormControl>
-
-      <FormControl id="image" mt={4}>
-        <FormLabel>Product Image</FormLabel>
-        <Input type="file" name="image" onChange={handleImageChange} />
-      </FormControl>
-
-      <Button mt={4} colorScheme="teal" type="submit">
-        Add Product
-      </Button>
-    </Box>
-  );
 };
 
 export default AddProductForm;
